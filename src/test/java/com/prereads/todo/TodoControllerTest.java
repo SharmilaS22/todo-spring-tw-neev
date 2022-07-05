@@ -1,5 +1,6 @@
 package com.prereads.todo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,8 +19,8 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -70,4 +71,32 @@ public class TodoControllerTest {
         verify(todoService, times(1)).add(any());
     }
 
+    @Test
+    public void shouldReturnStatusNoContentWhenDeleteAllTodosApiIsCalled() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/todo"))
+                .andExpect(status().isNoContent());
+        verify(todoService, times(1)).deleteAll();
+    }
+
+    @Test
+    public void shouldReturnStatusOkAndTodoObjectAsResponseWhenGetTodoApiIsCalled() throws Exception {
+        Todo todo = new Todo("A new task");
+        given(todoService.getTodo(1L)).willReturn(todo);
+
+        String content = mockMvc.perform(MockMvcRequestBuilders.get("/api/todo/1"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        Todo actualTodo = objectMapper.readValue(content, Todo.class);
+        assertThat(actualTodo, is(equalTo(todo)));
+    }
+
+    @Test
+    public void shouldReturnStatusNoContentWhenDeleteTodoApiIsCalled() throws Exception {
+        Long id = 1L;
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/todo/" + id))
+                .andExpect(status().isNoContent());
+        verify(todoService, times(1)).delete(id);
+    }
 }

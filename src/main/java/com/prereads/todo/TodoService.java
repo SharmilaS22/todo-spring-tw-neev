@@ -21,4 +21,17 @@ public class TodoService {
     public List<Todo> getAll() {
         return todoRepository.findAll();
     }
+
+    public void deleteAll() {
+        todoRepository.deleteAll();
+    }
+
+    public Todo getTodo(Long id) {
+        return todoRepository.findById(id).orElseThrow(() -> new IllegalStateException("Todo Not Available"));
+    }
+
+    public void delete(Long id) {
+        if (todoRepository.findById(id).isEmpty() ) throw new IllegalStateException("Id does not exist");
+        todoRepository.deleteById(id);
+    }
 }

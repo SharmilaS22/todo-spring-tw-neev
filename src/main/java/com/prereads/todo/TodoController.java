@@ -29,4 +29,22 @@ public class TodoController {
         todoService.add(todo.getName());
     }
 
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAllTodos() {
+        todoService.deleteAll();
+    }
+
+    @GetMapping(path = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Todo getTodo(@PathVariable("id") Long id) {
+        return todoService.getTodo(id);
+    }
+
+    @DeleteMapping(path = "/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTodo(@PathVariable("id") Long id) {
+        todoService.delete(id);
+    }
+
 }
