@@ -88,4 +88,24 @@ public class TodoServiceTest {
         assertThrows(IllegalStateException.class,
                 () -> todoService.delete(id));
     }
+
+    @Test
+    public void shouldCallUpdateByIdMethodInTodoRepositoryWhenUpdateMethodIsInvoked() {
+        Long id = 1L;
+        given(todoRepository.findById(id)).willReturn(Optional.of(new Todo()));
+
+        todoService.update(id, "Updated Task");
+
+        verify(todoRepository, times(1))
+                .updateNameById(id, "Updated Task");
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenIdDoesNotExistWhenUpdatingTodoObject() {
+        Long id = 1L;
+        given(todoRepository.findById(id)).willReturn(Optional.empty());
+
+        assertThrows(IllegalStateException.class,
+                () -> todoService.update(id, "Updated Task"));
+    }
 }

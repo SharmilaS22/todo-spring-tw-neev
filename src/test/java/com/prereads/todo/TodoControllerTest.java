@@ -11,10 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -98,5 +95,13 @@ public class TodoControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/todo/" + id))
                 .andExpect(status().isNoContent());
         verify(todoService, times(1)).delete(id);
+    }
+
+    @Test
+    public void shouldReturnStatusNoContentWhenUpdateTodoIsCalled() throws Exception {
+        Long id = 1L;
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/todo/" + id))
+                .andExpect(status().isNoContent());
+        verify(todoService, times(1)).update(id, "Updated task");
     }
 }
